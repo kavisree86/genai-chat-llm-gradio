@@ -5,16 +5,70 @@ To design and deploy a "Chat with LLM" application by leveraging the Gradio Bloc
 
 ### PROBLEM STATEMENT:
 
+
+
 ### DESIGN STEPS:
 
 #### STEP 1:
+Install the necessary libraries, such as gradio and transformers.
+Choose an appropriate LLM (e.g., OpenAI's GPT, Hugging Face's GPT-2/3.5/4).
+Ensure GPU support for faster inference, if required.
+
+
 
 #### STEP 2:
 
+Use gr.Blocks to design a modular and interactive layout.
+Define the components such as Textbox for user input, Chatbot for displaying messages, and Button for interaction.
+
 #### STEP 3:
+
+Test the application locally to ensure smooth functionality.
+Deploy the app using platforms like Hugging Face Spaces, Streamlit Cloud, or a custom server.
 
 ### PROGRAM:
 
+import gradio as gr
+
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Load the model and tokenizer
+
+model_name = "gpt2"  # Replace with your LLM
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name)
+
+
+# Function to interact with the model
+
+def chat_with_llm(user_input):
+    inputs = tokenizer.encode(user_input, return_tensors="pt")
+    outputs = model.generate(inputs, max_length=150, num_return_sequences=1, pad_token_id=tokenizer.eos_token_id)
+    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return response
+
+
+# Gradio interface using Blocks
+with gr.Blocks() as chat_interface:
+    gr.Markdown("### Chat with LLM")
+    with gr.Row():
+        with gr.Column():
+            user_input = gr.Textbox(placeholder="Type your message here...")
+            send_button = gr.Button("Send")
+        with gr.Column():
+            chatbot = gr.Chatbot()
+    
+    # Define interaction
+    send_button.click(chat_with_llm, inputs=user_input, outputs=chatbot)
+
+    
+# Launch the interface
+chat_interface.launch()
+
 ### OUTPUT:
 
+![image](https://github.com/user-attachments/assets/f986e210-f211-45bf-8208-3afcf42c5063)
+
 ### RESULT:
+
+The "Chat with LLM" application was successfully designed and deployed. The Gradio Blocks framework provided a user-friendly interface, ensuring seamless communication with the large language model.
